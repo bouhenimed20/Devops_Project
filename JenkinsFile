@@ -2,15 +2,15 @@ pipeline {
     agent any
     
     environment {
-        // Spécifie les variables d'environnement, y compris le chemin GitHub
+       
         GIT_REPO = 'https://github.com/benaissaislem/5ARCTIC6-G6-projet_devops.git'
-        GIT_CREDENTIALS_ID = 'github-credentials-id' // Remplace par ton ID de credentials
+        GIT_CREDENTIALS_ID = 'github_token' // Remplace par ton ID de credentials
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Récupération du projet depuis GitHub
+               
                 git credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO}"
             }
         }
@@ -43,9 +43,9 @@ pipeline {
     }
 
     post {
-        // Notifications en cas de build échoué
+       
         failure {
-            mail to: 'votre_email@example.com',
+            mail to: 'benaissa.isslem@gmail.com',
                  subject: "Échec du build : ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                  body: "Le build ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} a échoué. Vérifiez Jenkins pour plus de détails : ${env.BUILD_URL}"
         }
