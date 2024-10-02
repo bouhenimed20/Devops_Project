@@ -17,7 +17,7 @@ pipeline {
 
         stage('Clean') {
             steps {
-                // Nettoyage du projet
+               
                 script {
                     if (fileExists('target')) {
                         echo 'Nettoyage du répertoire target...'
@@ -29,14 +29,14 @@ pipeline {
 
         stage('Build') {
             steps {
-                // Construction du projet sans phase de test
+              
                 sh 'mvn clean package -DskipTests'
             }
         }
 
         stage('Archive Artifacts') {
             steps {
-                // Archive les artefacts dans le dossier target
+              
                 archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
             }
         }
