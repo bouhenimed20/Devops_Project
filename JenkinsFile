@@ -1,27 +1,38 @@
 pipeline {
     agent any
+    
+    environment {
+        GIT_REPO = 'https://github.com/benaissaislem/5ARCTIC6-G6-projet_devops.git'
+        GIT_CREDENTIALS_ID = 'github_token' 
+    }
 
     stages {
-        stage('Checkout GIT') {
+        stage('Checkout') {
             steps {
-                echo 'Pulling the repository...'
-                git(
-                    branch: 'main',
-                    url: 'https://github.com/benaissaislem/5ARCTIC6-G6-projet_devops.git'
-                )
-                
-                
-                echo 'Latest commit information:'
-                sh 'git log -1'
+                git branch: 'main', credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO}"
             }
         }
-        stage('Build with Maven') {
+
+        stage('Clean') {
             steps {
-                
-                echo 'Starting Maven compile...'
-                sh 'mvn clean compile'
-                
-                echo 'Maven compile completed'
+                script {
+                    if (fileExists('target')) {
+                        echo 'Nettoyage du répertoire target...'
+                        deleteDir() 
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
             }
         }
     }
