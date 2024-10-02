@@ -6,7 +6,7 @@ pipeline {
         GIT_CREDENTIALS_ID = 'github_token' 
     }
 
-    stages {
+     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO}"
