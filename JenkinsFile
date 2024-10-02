@@ -1,55 +1,28 @@
 pipeline {
     agent any
-    
-    environment {
-        GIT_REPO = 'https://github.com/benaissaislem/5ARCTIC6-G6-projet_devops.git'
-        GIT_CREDENTIALS_ID = 'github_token' // Remplace par ton ID de credentials
-    }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout GIT') {
             steps {
-                // Spécifie la branche 'main' pour éviter le problème de branche par défaut
-                git branch: 'main', credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO}"
+                echo 'Pulling the repository...'
+                git(
+                    branch: 'main',
+                    url: 'https://github.com/RabebBenHajSlimane/responsive-website-restaurant.git'
+                )
+                
+                // Afficher les informations sur le dernier commit
+                echo 'Latest commit information:'
+                sh 'git log -1'
             }
         }
-
-        stage('Clean') {
+        stage('Build with Maven') {
             steps {
-                script {
-                    if (fileExists('target')) {
-                        echo 'Nettoyage du répertoire target...'
-                        deleteDir() // Efface le dossier actuel pour nettoyer
-                    }
-                }
+                // Exécuter Maven pour compiler le projet
+                echo 'Starting Maven compile...'
+                sh 'mvn clean compile'
+                
+                echo 'Maven compile completed'
             }
-        }
-
-        stage('Build') {
-            steps {
-                // Compile le projet sans exécuter les tests
-                sh 'mvn clean package -DskipTests'
-            }
-        }
-
-        stage('Archive Artifacts') {
-            steps {
-                // Archive les fichiers jar dans le dossier target
-                archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
-            }
-        }
-    }
-
-    post {
-        // Actions après le pipeline
-        failure {
-            mail to: 'benaissa.isslem@gmail.com',
-                 subject: "Échec du build : ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                 body: "Le build ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} a échoué. Vérifiez Jenkins pour plus de détails : ${env.BUILD_URL}"
-        }
-        
-        success {
-            echo 'Build terminé avec succès !'
         }
     }
 }
