@@ -2,7 +2,6 @@ pipeline {
     agent any
     
     environment {
-       
         GIT_REPO = 'https://github.com/benaissaislem/5ARCTIC6-G6-projet_devops.git'
         GIT_CREDENTIALS_ID = 'github_token' // Remplace par ton ID de credentials
     }
@@ -10,18 +9,17 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-               
-                git credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO}"
+                // Spécifie la branche 'main' pour éviter le problème de branche par défaut
+                git branch: 'main', credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO}"
             }
         }
 
         stage('Clean') {
             steps {
-               
                 script {
                     if (fileExists('target')) {
                         echo 'Nettoyage du répertoire target...'
-                        deleteDir() // Efface le dossier actuel pour nettoyer
+                        deleteDir() // Nettoie le répertoire actuel
                     }
                 }
             }
@@ -29,25 +27,25 @@ pipeline {
 
         stage('Build') {
             steps {
-              
+                // Compile le projet sans exécuter les tests
                 sh 'mvn clean package -DskipTests'
             }
         }
 
         stage('Archive Artifacts') {
             steps {
-              
+                // Archive les fichiers jar dans le dossier target
                 archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
             }
         }
     }
 
     post {
-       
-        failure {
+        // Tu peux commenter cette section si le mail n'est pas configuré
+        /*failure {
             mail to: 'benaissa.isslem@gmail.com',
                  subject: "Échec du build : ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                  body: "Le build ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} a échoué. Vérifiez Jenkins pour plus de détails : ${env.BUILD_URL}"
-        }
+        }*/
     }
 }
