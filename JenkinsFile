@@ -38,7 +38,7 @@ pipeline {
     }
 
     post {
-        // Actions après le pipeline
+        
         failure {
             mail to: 'benaissa.isslem@gmail.com',
                  subject: "Échec du build : ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
@@ -50,3 +50,4 @@ pipeline {
         }
     }
 }
+    
