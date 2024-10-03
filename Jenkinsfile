@@ -4,12 +4,13 @@ pipeline {
     environment {
         GIT_REPO = 'https://github.com/benaissaislem/5ARCTIC6-G6-projet_devops.git'
         GIT_CREDENTIALS_ID = 'jenkins-vagran'
+        MAIL_RECIPIENT = 'mohamed.bouheni@esprit.tn'
+        MAIL_SENDER = 'support@darkmatter-corp.co'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the repository
                 git branch: 'main', credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO}"
             }
         }
@@ -17,7 +18,6 @@ pipeline {
         stage('Clean') {
             steps {
                 script {
-                    // Remove the target directory, if it exists
                     if (fileExists('target')) {
                         echo 'Cleaning target directory...'
                         sh 'rm -rf target'
@@ -28,14 +28,12 @@ pipeline {
 
         stage('Build') {
             steps {
-                // Build the project using Maven, which will read the pom.xml by default
                 sh 'mvn clean package -DskipTests'
             }
         }
 
         stage('Archive Artifacts') {
             steps {
-                // Archive the generated JAR file(s) from the target directory
                 archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
             }
         }
@@ -43,15 +41,31 @@ pipeline {
 
     post {
         failure {
-            // Send an email if the build fails
-            mail to: 'mohamed.bouheni@esprit.tn',
-                 subject: "Build Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                 body: "The build ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} has failed. Check Jenkins for details: ${env.BUILD_URL}"
+            script {
+                def errorDetails = currentBuild.rawBuild.getLog(10).join("\n") // Get last 10 lines of the log for the error
+
+                // Send failure email with error details
+                mail to: "${MAIL_RECIPIENT}",
+                     subject: "Build Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                     body: """
+                     The build ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} has failed.
+                     Error Details:
+                     ${errorDetails}
+                     Check Jenkins for more details: ${env.BUILD_URL}
+                     """,
+                     replyTo: "${MAIL_SENDER}"
+            }
         }
 
         success {
-            // Output message for successful builds
-            echo 'Build completed successfully!'
+            // Send success email notification
+            mail to: "${MAIL_RECIPIENT}",
+                 subject: "Build Success: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                 body: """
+                 The build ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} has completed successfully.
+                 Check Jenkins for more details: ${env.BUILD_URL}
+                 """,
+                 replyTo: "${MAIL_SENDER}"
         }
     }
 }
