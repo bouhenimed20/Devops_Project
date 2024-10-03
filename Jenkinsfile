@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         GIT_REPO = 'https://github.com/benaissaislem/5ARCTIC6-G6-projet_devops.git'
-        GIT_CREDENTIALS_ID = 'jenkins-vagrant'
+        GIT_CREDENTIALS_ID = 'jenkins-vagran'
     }
 
      stages {
