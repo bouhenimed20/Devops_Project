@@ -5,13 +5,13 @@ pipeline {
         GIT_REPO = 'https://github.com/benaissaislem/5ARCTIC6-G6-projet_devops.git'
         GIT_CREDENTIALS_ID = 'jenkins-vagran'
         MAIL_RECIPIENT = 'mohamed.bouheni@esprit.tn'
-        MAIL_SENDER = 'support@darkmatter-corp.co'
+        MAIL_SENDER = 'support@darkmatter-corp.com'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO}"
+                git branch: 'BouheniMohamed-5ARCTIC6-G6', credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO}"
             }
         }
 
