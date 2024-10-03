@@ -40,7 +40,7 @@ pipeline {
     post {
 
         failure {
-            mail to: 'benaissa.isslem@gmail.com',
+            mail to: 'mohamed.bouheni@esprit.tn',
                  subject: "Échec du build : ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                  body: "Le build ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} a échoué. Vérifiez Jenkins pour plus de détails : ${env.BUILD_URL}"
         }
