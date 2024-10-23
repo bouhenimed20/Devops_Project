@@ -37,7 +37,6 @@ public class SpringDocConfig {
                 .pathsToExclude("**")
                 .build();
     }
-
     @Bean
     public GroupedOpenApi blocPublicApi() {
         return GroupedOpenApi.builder()
