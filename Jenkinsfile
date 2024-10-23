@@ -32,6 +32,30 @@ pipeline {
             }
         }
 
+
+stage('Run Tests') {
+            steps {
+                script {
+                    // Exécute les tests et capture les résultats
+                    def testResults = sh(script: 'mvn test', returnStatus: true)
+
+                    if (testResults != 0) {
+                        echo 'Tests échoués. Vérifiez les résultats.'
+                    } else {
+                        echo 'Tous les tests ont réussi.'
+                    }
+                }
+            }
+        }
+
+        stage('Publish Test Outcomes') {
+            steps {
+                // Publie les résultats des tests
+                junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true
+            }
+        }
+
+
         stage('Archive Artifacts') {
             steps {
                 archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
