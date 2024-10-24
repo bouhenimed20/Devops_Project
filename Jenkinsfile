@@ -86,8 +86,9 @@ pipeline {
     post {
         failure {
             script {
-                def errorDetails = currentBuild.rawBuild.getLog(10).join("\n")
+                def errorDetails = currentBuild.getLog(10).join("\n") // Get last 10 lines of the log for the error
 
+                // Send failure email with error details
                 mail to: "${MAIL_RECIPIENT}",
                      subject: "Build Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                      body: """
