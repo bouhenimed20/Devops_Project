@@ -86,7 +86,8 @@ pipeline {
     post {
         failure {
             script {
-                def errorDetails = currentBuild.getLog(10).join("\n") // Get last 10 lines of the log for the error
+                def errorDetails = currentBuild.rawBuild.getLog(10) // Get the last 10 lines of the log for the error
+                def errorMessage = errorDetails.join("\n") // Join the lines into a single string for the email
 
                 // Send failure email with error details
                 mail to: "${MAIL_RECIPIENT}",
@@ -94,7 +95,7 @@ pipeline {
                      body: """
                      The build ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} has failed.
                      Error Details:
-                     ${errorDetails}
+                     ${errorMessage}
                      Check Jenkins for more details: ${env.BUILD_URL}
                      """,
                      replyTo: "${MAIL_SENDER}"
