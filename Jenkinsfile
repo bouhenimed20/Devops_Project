@@ -15,15 +15,6 @@ pipeline {
             }
         }
 
-        stage('Print Workspace') {
-            steps {
-                script {
-                    echo "Current workspace: ${env.WORKSPACE}"
-                    sh 'ls -al $WORKSPACE' // Corrected: List files in the workspace
-                }
-            }
-        }
-
         stage('Clean') {
             steps {
                 script {
@@ -41,9 +32,11 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+
+stage('Run Tests') {
             steps {
                 script {
+                    // Exécute les tests et capture les résultats
                     def testResults = sh(script: 'mvn test', returnStatus: true)
 
                     if (testResults != 0) {
@@ -57,28 +50,15 @@ pipeline {
 
         stage('Publish Test Outcomes') {
             steps {
+                // Publie les résultats des tests
                 junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true
             }
         }
 
+
         stage('Archive Artifacts') {
             steps {
-                script {
-                    if (fileExists('target/*.jar')) {
-                        archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: false
-                        echo 'Artifacts archived successfully.'
-                    } else {
-                        echo 'No artifacts found to archive.'
-                    }
-                }
-            }
-        }
-
-        stage('Deploy to Vagrant') {
-            steps {
-                script {
-                    sh 'scp -o StrictHostKeyChecking=no target/*.jar vagrant@192.168.33.10:/home/vagrant/' // Change the destination as needed
-                }
+                archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
             }
         }
     }
@@ -86,8 +66,7 @@ pipeline {
     post {
         failure {
             script {
-                def errorDetails = currentBuild.rawBuild.getLog(10) // Get the last 10 lines of the log for the error
-                def errorMessage = errorDetails.join("\n") // Join the lines into a single string for the email
+                def errorDetails = currentBuild.rawBuild.getLog(10).join("\n") // Get last 10 lines of the log for the error
 
                 // Send failure email with error details
                 mail to: "${MAIL_RECIPIENT}",
@@ -95,7 +74,7 @@ pipeline {
                      body: """
                      The build ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} has failed.
                      Error Details:
-                     ${errorMessage}
+                     ${errorDetails}
                      Check Jenkins for more details: ${env.BUILD_URL}
                      """,
                      replyTo: "${MAIL_SENDER}"
@@ -103,6 +82,7 @@ pipeline {
         }
 
         success {
+            // Send success email notification
             mail to: "${MAIL_RECIPIENT}",
                  subject: "Build Success: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                  body: """
@@ -113,3 +93,5 @@ pipeline {
         }
     }
 }
+
+check the jenkins file maybe its not uploading the files in vagrant 
