@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script {
                     echo "Current workspace: ${env.WORKSPACE}"
-                    sh 'ls -al ${env.WORKSPACE}' // List files in the workspace
+                    sh 'ls -al $WORKSPACE' // Corrected: List files in the workspace
                 }
             }
         }
