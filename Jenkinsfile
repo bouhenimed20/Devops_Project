@@ -83,3 +83,5 @@ pipeline {
         }
     }
 }
+
+check the jenkins file maybe its not uploading the files in vagrant 
