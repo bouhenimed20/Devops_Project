@@ -1,7 +1,7 @@
 pipeline {
     agent any
 
-    environment {
+   environment {
         GIT_REPO = 'https://github.com/benaissaislem/5ARCTIC6-G6-projet_devops.git'
         GIT_CREDENTIALS_ID = 'jenkins-vagran'
         MAIL_RECIPIENT = 'mohamed.bouheni@esprit.tn'
@@ -15,10 +15,10 @@ pipeline {
             }
         }
 
-        stage('Clean') {
+        stage ('Clean') {
             steps {
                 script {
-                    if (fileExists('target')) {
+                    if  (fileExists('target')) {
                         echo 'Cleaning target directory...'
                         sh 'rm -rf target'
                     }
@@ -33,30 +33,20 @@ pipeline {
         }
 
 
-stage('Run Tests') {
+       stage('Test') {
             steps {
-                script {
-                    // Exécute les tests et capture les résultats
-                    def testResults = sh(script: 'mvn test', returnStatus: true)
-
-                    if (testResults != 0) {
-                        echo 'Tests échoués. Vérifiez les résultats.'
-                    } else {
-                        echo 'Tous les tests ont réussi.'
-                    }
-                }
-            }
+                sh 'mvn test'
+           }
         }
-
-        stage('Publish Test Outcomes') {
-            steps {
-                // Publie les résultats des tests
-                junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true
+        stage('Publish Test Results') {
+           steps {
+                 junit skipPublishingChecks: true, allowEmptyResults: true, testResults: '**/*.xml'
             }
         }
 
 
-        stage('Archive Artifacts') {
+
+         stage('Archive Artifacts') {
             steps {
                 archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
             }
@@ -66,9 +56,9 @@ stage('Run Tests') {
     post {
         failure {
             script {
-                def errorDetails = currentBuild.rawBuild.getLog(10).join("\n") // Get last 10 lines of the log for the error
+                def errorDetails = currentBuild.rawBuild.getLog(10).join("\n")
 
-                // Send failure email with error details
+
                 mail to: "${MAIL_RECIPIENT}",
                      subject: "Build Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                      body: """
@@ -81,8 +71,8 @@ stage('Run Tests') {
             }
         }
 
-        success {
-            // Send success email notification
+    success {
+
             mail to: "${MAIL_RECIPIENT}",
                  subject: "Build Success: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                  body: """
