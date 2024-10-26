@@ -6,6 +6,8 @@ pipeline {
         GIT_CREDENTIALS_ID = 'jenkins-vagran'
         MAIL_RECIPIENT = 'mohamed.bouheni@esprit.tn'
         MAIL_SENDER = 'support@darkmatter-corp.com'
+        DOCKER_HUB_CREDENTIALS_ID = 'dockerhub_credentials'
+        DOCKER_IMAGE_NAME = 'bouheni/foyer-app'
     }
 
     stages {
@@ -51,7 +53,25 @@ pipeline {
                 archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
             }
         }
-    }
+        stage('Build Docker Image') {
+                    steps {
+                        script {
+                            sh "docker build -t ${DOCKER_IMAGE_NAME}:latest ."
+                        }
+                    }
+                }
+
+                stage('Push Docker Image') {
+                    steps {
+                        script {
+                            withCredentials([usernamePassword(credentialsId: "${DOCKER_HUB_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                                sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin"
+                            }
+                            sh "docker push ${DOCKER_IMAGE_NAME}:latest"
+                        }
+                    }
+                }
+            }
 
     post {
         failure {
