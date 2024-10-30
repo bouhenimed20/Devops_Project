@@ -4,11 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import tn.esprit.spring.DAO.Entities.*;
-import tn.esprit.spring.DAO.Repositories.BlocRepository;
-import tn.esprit.spring.DAO.Repositories.ChambreRepository;
-import tn.esprit.spring.Services.Chambre.ChambreService;
+import tn.esprit.spring.dao.entities.*;
+import tn.esprit.spring.dao.repositories.BlocRepository;
+import tn.esprit.spring.dao.repositories.ChambreRepository;
+import tn.esprit.spring.services.chambre.ChambreService;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -19,7 +18,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class ChambreServiceWithMocksTest {
+ class ChambreServiceWithMocksTest {
 
     @Mock
     private ChambreRepository chambreRepository;
@@ -32,11 +31,11 @@ public class ChambreServiceWithMocksTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+       //init
     }
 
     @Test
-    public void testAddOrUpdate() {
+     void testAddOrUpdate() {
         Chambre chambre = new Chambre();
         when(chambreRepository.save(chambre)).thenReturn(chambre);
 
@@ -47,7 +46,7 @@ public class ChambreServiceWithMocksTest {
     }
 
     @Test
-    public void testFindAll() {
+    void testFindAll() {
         List<Chambre> chambres = Arrays.asList(new Chambre(), new Chambre());
         when(chambreRepository.findAll()).thenReturn(chambres);
 
@@ -58,7 +57,7 @@ public class ChambreServiceWithMocksTest {
     }
 
     @Test
-    public void testFindById() {
+     void testFindById() {
         Chambre chambre = new Chambre();
         when(chambreRepository.findById(1L)).thenReturn(Optional.of(chambre));
 
@@ -69,7 +68,7 @@ public class ChambreServiceWithMocksTest {
     }
 
     @Test
-    public void testDeleteById() {
+     void testDeleteById() {
         doNothing().when(chambreRepository).deleteById(1L);
 
         chambreService.deleteById(1L);
@@ -78,7 +77,7 @@ public class ChambreServiceWithMocksTest {
     }
 
     @Test
-    public void testDelete() {
+     void testDelete() {
         Chambre chambre = new Chambre();
         doNothing().when(chambreRepository).delete(chambre);
 
@@ -88,7 +87,7 @@ public class ChambreServiceWithMocksTest {
     }
 
     @Test
-    public void testGetChambresParNomBloc() {
+     void testGetChambresParNomBloc() {
         List<Chambre> chambres = Arrays.asList(new Chambre(), new Chambre());
         when(chambreRepository.findByBlocNomBloc("Bloc A")).thenReturn(chambres);
 
@@ -99,7 +98,7 @@ public class ChambreServiceWithMocksTest {
     }
 
     @Test
-    public void testNbChambreParTypeEtBloc() {
+     void testNbChambreParTypeEtBloc() {
         when(chambreRepository.countByTypeCAndBlocIdBloc(TypeChambre.SIMPLE, 1L)).thenReturn(Math.toIntExact(5L));
 
         long result = chambreService.nbChambreParTypeEtBloc(TypeChambre.SIMPLE, 1L);
@@ -109,10 +108,10 @@ public class ChambreServiceWithMocksTest {
     }
 
     @Test
-    public void testGetChambresNonReserveParNomFoyerEtTypeChambre() {
+     void testGetChambresNonReserveParNomFoyerEtTypeChambre() {
         // Setup dates for the test
-        LocalDate dateDebutAU = LocalDate.of(2023, 9, 15);
-        LocalDate dateFinAU = LocalDate.of(2024, 6, 30);
+          LocalDate.of(2023, 9, 15);
+         LocalDate.of(2024, 6, 30);
 
         // Create a Foyer object
         Foyer foyer = new Foyer();
@@ -142,7 +141,7 @@ public class ChambreServiceWithMocksTest {
 
 
     @Test
-    public void testPourcentageChambreParTypeChambre() {
+     void testPourcentageChambreParTypeChambre() {
         when(chambreRepository.count()).thenReturn(10L);
         when(chambreRepository.countChambreByTypeC(TypeChambre.SIMPLE)).thenReturn(4L);
         when(chambreRepository.countChambreByTypeC(TypeChambre.DOUBLE)).thenReturn(3L);
@@ -157,7 +156,7 @@ public class ChambreServiceWithMocksTest {
     }
 
     @Test
-    public void testNbPlacesDisponibleParChambreAnneeEnCours() {
+     void testNbPlacesDisponibleParChambreAnneeEnCours() {
         // Adjust dates as necessary, based on the expected behavior of your service method
         LocalDate dateDebutAU = LocalDate.of(2024, 9, 15);  // This might be calculated in the service
         LocalDate dateFinAU = LocalDate.of(2025, 6, 30); // This might be calculated in the service
