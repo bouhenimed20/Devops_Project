@@ -10,83 +10,90 @@ import tn.esprit.spring.dao.entities.*;
 import tn.esprit.spring.dao.repositories.BlocRepository;
 import tn.esprit.spring.dao.repositories.ChambreRepository;
 import tn.esprit.spring.services.chambre.ChambreService;
+
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
- class ChambreServiceWithMocksTest {
+class ChambreServiceWithMocksTest {
 
-    @Mock
-    private ChambreRepository chambreRepository;
+   @Mock
+   private ChambreRepository chambreRepository;
 
-    @Mock
-    private BlocRepository blocRepository;
+   @Mock
+   private BlocRepository blocRepository;
 
-    @InjectMocks
-    private ChambreService chambreService;
+   @InjectMocks
+   private ChambreService chambreService;
 
-    @BeforeEach
-    public void setUp() {
-       //init
-    }
+   @BeforeEach
+   public void setUp() {
+      // Mock initialization is handled by MockitoExtension
+   }
 
-    @Test
-     void testAddOrUpdate() {
-        Chambre chambre = new Chambre();
-        when(chambreRepository.save(chambre)).thenReturn(chambre);
+   @Test
+   void testAddOrUpdate() {
+      Chambre chambre = new Chambre();
+      when(chambreRepository.save(chambre)).thenReturn(chambre);
 
-        Chambre result = chambreService.addOrUpdate(chambre);
+      Chambre result = chambreService.addOrUpdate(chambre);
 
-        assertEquals(chambre, result);
-        verify(chambreRepository, times(1)).save(chambre);
-    }
+      assertEquals(chambre, result);
+      verify(chambreRepository, times(1)).save(chambre);
+   }
 
-    @Test
-    void testFindAll() {
-        List<Chambre> chambres = Arrays.asList(new Chambre(), new Chambre());
-        when(chambreRepository.findAll()).thenReturn(chambres);
+   @Test
+   void testFindAll() {
+      List<Chambre> chambres = Arrays.asList(new Chambre(), new Chambre());
+      when(chambreRepository.findAll()).thenReturn(chambres);
 
-        List<Chambre> result = chambreService.findAll();
+      List<Chambre> result = chambreService.findAll();
 
-        assertEquals(chambres, result);
-        verify(chambreRepository, times(1)).findAll();
-    }
+      assertEquals(chambres, result);
+      verify(chambreRepository, times(1)).findAll();
+   }
 
-    @Test
-     void testFindById() {
-        Chambre chambre = new Chambre();
-        when(chambreRepository.findById(1L)).thenReturn(Optional.of(chambre));
+   @Test
+   void testFindById() {
+      Chambre chambre = new Chambre();
+      when(chambreRepository.findById(1L)).thenReturn(Optional.of(chambre));
 
-        Chambre result = chambreService.findById(1L);
+      Chambre result = chambreService.findById(1L);
 
-        assertEquals(chambre, result);
-        verify(chambreRepository, times(1)).findById(1L);
-    }
+      assertEquals(chambre, result);
+      verify(chambreRepository, times(1)).findById(1L);
+   }
 
-    @Test
-     void testDeleteById() {
-        doNothing().when(chambreRepository).deleteById(1L);
+   @Test
+   void testDeleteById() {
+      doNothing().when(chambreRepository).deleteById(1L);
 
-        chambreService.deleteById(1L);
+      chambreService.deleteById(1L);
 
-        verify(chambreRepository, times(1)).deleteById(1L);
-    }
+      verify(chambreRepository, times(1)).deleteById(1L);
+   }
 
-    @Test
-     void testDelete() {
-        Chambre chambre = new Chambre();
-        doNothing().when(chambreRepository).delete(chambre);
+   @Test
+   void testDelete() {
+      Chambre chambre = new Chambre();
+      doNothing().when(chambreRepository).delete(chambre);
 
-        chambreService.delete(chambre);
+      chambreService.delete(chambre);
 
-        verify(chambreRepository, times(1)).delete(chambre);
-    }
+      verify(chambreRepository, times(1)).delete(chambre);
+   }
 
-    @Test
+   // Other tests remain unchanged...
+
+
+
+@Test
      void testGetChambresParNomBloc() {
         List<Chambre> chambres = Arrays.asList(new Chambre(), new Chambre());
         when(chambreRepository.findByBlocNomBloc("Bloc A")).thenReturn(chambres);
