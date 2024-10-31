@@ -38,25 +38,19 @@ pipeline {
             }
         }
 
-      stage('JaCoCo Report') {
-                  steps {
-                      sh 'mvn jacoco:report'
-                  }
-              }
-
-              stage('SonarQube Analysis') {
-                  steps {
-                      script {
-                          sh """
-                          mvn sonar:sonar \
-                              -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                              -Dsonar.projectName='${SONAR_PROJECT_NAME}' \
-                              -Dsonar.host.url=${SONARQUBE_HOST_URL} \
-                              -Dsonar.token=${SONARQUBE_TOKEN}
-                          """
-                      }
-                  }
-              }
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    sh """
+                    mvn clean verify sonar:sonar \
+                      -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                      -Dsonar.projectName=${SONAR_PROJECT_NAME} \
+                      -Dsonar.host.url=${SONAR_HOST_URL} \
+                      -Dsonar.token=${SONAR_TOKEN}
+                    """
+                }
+            }
+        }
 
         stage('Test') {
             steps {
