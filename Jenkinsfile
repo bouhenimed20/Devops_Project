@@ -113,26 +113,7 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            junit '**/target/surefire-reports/*.xml'
-            archiveArtifacts artifacts: '**/target/site/jacoco/*', fingerprint: true
-        }
 
-        failure {
-            script {
-                def errorDetails = currentBuild.rawBuild.getLog(10).join("\n")
-                mail to: "${MAIL_RECIPIENT}",
-                     subject: "Build Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                     body: """
-                     The build ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} has failed.
-                     Error Details:
-                     ${errorDetails}
-                     Check Jenkins for more details: ${env.BUILD_URL}
-                     """,
-                     replyTo: "${MAIL_SENDER}"
-            }
-        }
 
         success {
             mail to: "${MAIL_RECIPIENT}",
