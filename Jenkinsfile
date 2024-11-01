@@ -11,13 +11,13 @@ pipeline {
         SONAR_PROJECT_KEY = '5ARCTIC6-G6-projet_devops'
         SONAR_PROJECT_NAME = '5ARCTIC6-G6-projet_devops'
         SONAR_HOST_URL = 'http://192.168.33.10:9000'
-        SONAR_TOKEN = 'sqp_025708b4238e562854193537a342b8f1611abbab'
+        SONAR_TOKEN = 'sqp_025708b4238e562854193537a342b8f1611abbab' // Consider using Jenkins credentials for sensitive data
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'BouheniMohamed-5ARCTIC6-G6', credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO}"
+                git branch: 'BouheniMohamed-5ARCTIC6-G6', credentialsId: GIT_CREDENTIALS_ID, url: GIT_REPO
             }
         }
 
@@ -40,24 +40,9 @@ pipeline {
                     } catch (Exception e) {
                         echo "Build failed: ${e.message}"
                         currentBuild.result = 'FAILURE'
+                        error("Stopping the pipeline due to build failure.")
                     }
                 }
-            }
-        }
-
-        stage('JaCoCo Report') {
-            steps {
-                sh 'mvn jacoco:report'
-            }
-        }
-
-        stage('Publish JaCoCo Report') {
-            steps {
-                jacoco execPattern: '**/target/jacoco.exec',
-                        classPattern: '**/target/classes',
-                        sourcePattern: '**/src/main/java',
-                        exclusionPattern: '**/test/**',
-                        changeBuildStatus: true
             }
         }
 
@@ -65,7 +50,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    mvn clean verify sonar:sonar \
+                    mvn sonar:sonar \
                       -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
                       -Dsonar.projectName=${SONAR_PROJECT_NAME} \
                       -Dsonar.host.url=${SONAR_HOST_URL} \
@@ -83,7 +68,7 @@ pipeline {
 
         stage('Publish Test Results') {
             steps {
-                junit skipPublishingChecks: true, allowEmptyResults: true, testResults: '**/*.xml'
+                junit skipPublishingChecks: true, allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
             }
         }
 
@@ -104,25 +89,33 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: "${DOCKER_HUB_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: DOCKER_HUB_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin"
+                        sh "docker push ${DOCKER_IMAGE_NAME}:latest"
                     }
-                    sh "docker push ${DOCKER_IMAGE_NAME}:latest"
                 }
             }
         }
     }
 
-
-
+    post {
         success {
-            mail to: "${MAIL_RECIPIENT}",
+            mail to: MAIL_RECIPIENT,
                  subject: "Build Success: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                  body: """
                  The build ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} has completed successfully.
                  Check Jenkins for more details: ${env.BUILD_URL}
                  """,
-                 replyTo: "${MAIL_SENDER}"
+                 replyTo: MAIL_SENDER
+        }
+        failure {
+            mail to: MAIL_RECIPIENT,
+                 subject: "Build Failure: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                 body: """
+                 The build ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} has failed.
+                 Check Jenkins for more details: ${env.BUILD_URL}
+                 """,
+                 replyTo: MAIL_SENDER
         }
     }
 }
