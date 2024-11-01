@@ -38,6 +38,12 @@ pipeline {
             }
         }
 
+        stage('JaCoCo Report') {
+            steps {
+                sh 'mvn jacoco:report'
+            }
+        }
+        
         stage('SonarQube Analysis') {
             steps {
                 script {
