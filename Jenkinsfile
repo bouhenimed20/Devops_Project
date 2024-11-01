@@ -21,7 +21,7 @@ pipeline {
             }
         }
 
-        stage ('Clean') {
+        stage('Clean') {
             steps {
                 script {
                     if (fileExists('target')) {
@@ -38,28 +38,21 @@ pipeline {
             }
         }
 
-     stage('JaCoCo Report') {
-                 steps {
-                     sh 'mvn jacoco:report'
-                 }
-             }
+        stage('JaCoCo Report') {
+            steps {
+                sh 'mvn jacoco:report'
+            }
+        }
 
-             stage('Publish JaCoCo Report') {
-                 steps {
-                     jacoco execPattern: '**/target/jacoco.exec',
-                             classPattern: '**/target/classes',
-                             sourcePattern: '**/src/main/java',
-                             exclusionPattern: '**/test/**',
-                             changeBuildStatus: true
-                 }
-             }
-         }
-
-         post {
-             always {
-                 junit '**/target/surefire-reports/*.xml' // Publishing test results
-                 archiveArtifacts artifacts: '**/target/site/jacoco/*', fingerprint: true // Archive the JaCoCo report
-             }
+        stage('Publish JaCoCo Report') {
+            steps {
+                jacoco execPattern: '**/target/jacoco.exec',
+                        classPattern: '**/target/classes',
+                        sourcePattern: '**/src/main/java',
+                        exclusionPattern: '**/test/**',
+                        changeBuildStatus: true
+            }
+        }
 
         stage('SonarQube Analysis') {
             steps {
@@ -114,6 +107,11 @@ pipeline {
     }
 
     post {
+        always {
+            junit '**/target/surefire-reports/*.xml' // Publishing test results
+            archiveArtifacts artifacts: '**/target/site/jacoco/*', fingerprint: true // Archive the JaCoCo report
+        }
+
         failure {
             script {
                 def errorDetails = currentBuild.rawBuild.getLog(10).join("\n")
