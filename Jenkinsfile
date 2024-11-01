@@ -17,7 +17,15 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'BouheniMohamed-5ARCTIC6-G6', credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO}"
+                script {
+                    try {
+                        git branch: 'BouheniMohamed-5ARCTIC6-G6', credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO}"
+                    } catch (Exception e) {
+                        echo "Checkout failed: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        error("Stopping pipeline due to checkout failure.")
+                    }
+                }
             }
         }
 
@@ -40,16 +48,23 @@ pipeline {
                     } catch (Exception e) {
                         echo "Build failed: ${e.message}"
                         currentBuild.result = 'FAILURE'
+                        error("Stopping pipeline due to build failure.")
                     }
                 }
             }
         }
 
-
         stage('JaCoCo Report') {
             steps {
-                sh 'mvn jacoco:report'
-
+                script {
+                    try {
+                        sh 'mvn jacoco:report'
+                    } catch (Exception e) {
+                        echo "JaCoCo report generation failed: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        error("Stopping pipeline due to JaCoCo report failure.")
+                    }
+                }
             }
         }
 
@@ -66,20 +81,34 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    sh """
-                    mvn clean verify sonar:sonar \
-                      -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                      -Dsonar.projectName=${SONAR_PROJECT_NAME} \
-                      -Dsonar.host.url=${SONAR_HOST_URL} \
-                      -Dsonar.token=${SONAR_TOKEN}
-                    """
+                    try {
+                        sh """
+                        mvn clean verify sonar:sonar \
+                          -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                          -Dsonar.projectName=${SONAR_PROJECT_NAME} \
+                          -Dsonar.host.url=${SONAR_HOST_URL} \
+                          -Dsonar.token=${SONAR_TOKEN}
+                        """
+                    } catch (Exception e) {
+                        echo "SonarQube analysis failed: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        error("Stopping pipeline due to SonarQube analysis failure.")
+                    }
                 }
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test'
+                script {
+                    try {
+                        sh 'mvn test'
+                    } catch (Exception e) {
+                        echo "Tests failed: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        error("Stopping pipeline due to test failure.")
+                    }
+                }
             }
         }
 
@@ -98,7 +127,13 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${DOCKER_IMAGE_NAME}:latest ."
+                    try {
+                        sh "docker build -t ${DOCKER_IMAGE_NAME}:latest ."
+                    } catch (Exception e) {
+                        echo "Docker build failed: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        error("Stopping pipeline due to Docker build failure.")
+                    }
                 }
             }
         }
@@ -107,9 +142,15 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: "${DOCKER_HUB_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin"
+                        try {
+                            sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin"
+                            sh "docker push ${DOCKER_IMAGE_NAME}:latest"
+                        } catch (Exception e) {
+                            echo "Docker push failed: ${e.message}"
+                            currentBuild.result = 'FAILURE'
+                            error("Stopping pipeline due to Docker push failure.")
+                        }
                     }
-                    sh "docker push ${DOCKER_IMAGE_NAME}:latest"
                 }
             }
         }
