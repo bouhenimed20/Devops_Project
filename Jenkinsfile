@@ -50,7 +50,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    mvn sonar:sonar \
+                    mvn clean verify sonar:sonar \
                       -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
                       -Dsonar.projectName=${SONAR_PROJECT_NAME} \
                       -Dsonar.host.url=${SONAR_HOST_URL} \
@@ -59,6 +59,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Test') {
             steps {
