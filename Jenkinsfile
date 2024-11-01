@@ -34,13 +34,22 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                script {
+                    try {
+                        sh 'mvn clean package -DskipTests'
+                    } catch (Exception e) {
+                        echo "Build failed: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
             }
         }
+
 
         stage('JaCoCo Report') {
             steps {
                 sh 'mvn jacoco:report'
+
             }
         }
 
