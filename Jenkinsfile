@@ -11,7 +11,7 @@ pipeline {
         SONAR_PROJECT_KEY = '5ARCTIC6-G6-projet_devops'
         SONAR_PROJECT_NAME = '5ARCTIC6-G6-projet_devops'
         SONAR_HOST_URL = 'http://192.168.33.10:9000'
-        SONAR_TOKEN = 'sqp_025708b4238e562854193537a342b8f1611abbab' // Consider using Jenkins credentials for sensitive data
+        SONAR_TOKEN = 'sqp_025708b4238e562854193537a342b8f1611abbab'
     }
 
     stages {
@@ -60,7 +60,6 @@ pipeline {
             }
         }
 
-
         stage('Test') {
             steps {
                 sh 'mvn test'
@@ -97,22 +96,21 @@ pipeline {
                 }
             }
         }
-    }
 
-    stage('Deploy') {
-                steps {
-                    script {
-                        try {
-                            sh 'mvn clean deploy -DskipTests'
-                        } catch (Exception e) {
-                            echo "Deployment failed: ${e.message}"
-                            currentBuild.result = 'FAILURE'
-                            error("Stopping the pipeline due to deployment failure.")
-                        }
+        stage('Deploy') {
+            steps {
+                script {
+                    try {
+                        sh 'mvn clean deploy -DskipTests'
+                    } catch (Exception e) {
+                        echo "Deployment failed: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        error("Stopping the pipeline due to deployment failure.")
                     }
                 }
             }
         }
+    }
 
     post {
         success {
