@@ -99,6 +99,21 @@ pipeline {
         }
     }
 
+    stage('Deploy') {
+                steps {
+                    script {
+                        try {
+                            sh 'mvn clean deploy -DskipTests'
+                        } catch (Exception e) {
+                            echo "Deployment failed: ${e.message}"
+                            currentBuild.result = 'FAILURE'
+                            error("Stopping the pipeline due to deployment failure.")
+                        }
+                    }
+                }
+            }
+        }
+
     post {
         success {
             mail to: MAIL_RECIPIENT,
