@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_DATABASE: Foyer
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  app:
+    image: islem425/foyer-app
+    container_name: springboot-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/Foyer?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD:
+    ports:
+      - "8082:8081"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
+    driver: local
