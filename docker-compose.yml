@@ -13,7 +13,7 @@ services:
       - db_data:/var/lib/mysql
 
   app:
-    image: islem425/foyer-app
+    image: bouheni/foyer-app
     container_name: springboot-app
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/Foyer?createDatabaseIfNotExist=true
