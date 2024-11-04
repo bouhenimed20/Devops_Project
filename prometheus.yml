@@ -11,17 +11,21 @@ rule_files: []
 
 scrape_configs:
   - job_name: "jenkins"
-    metrics_path: /prometheus  # Ensure Prometheus plugin is installed
+    metrics_path: /prometheus
     static_configs:
       - targets: ["192.168.33.10:8080"]
 
   - job_name: "springboot"
-    metrics_path: /actuator/prometheus  # Common path with Spring Boot + Micrometer
+    metrics_path: /actuator/prometheus
     static_configs:
       - targets: ["192.168.33.10:8082"]
 
   - job_name: "sonarqube"
-    metrics_path: /metrics  # Typical with SonarQube exporter
+    metrics_path: /metrics
     static_configs:
-      - targets: ["192.168.33.10:9000"]  # Replace with exporter port if installed
+      - targets: ["192.168.33.10:9000"]
 
+  - job_name: "vm"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["192.168.33.10:9100"]
