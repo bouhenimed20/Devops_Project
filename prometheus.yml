@@ -20,10 +20,10 @@ scrape_configs:
     static_configs:
       - targets: ["192.168.33.10:8082"]
 
-  - job_name: "sonarqube"
-    metrics_path: /metrics
+  - job_name: 'sonarqube'
+    metrics_path: '/api/prometheus/metrics'
     static_configs:
-      - targets: ["192.168.33.10:9000"]
+      - targets: ['192.168.33.10:9000']
 
   - job_name: "vm"
     metrics_path: /metrics
