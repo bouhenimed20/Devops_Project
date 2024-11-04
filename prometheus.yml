@@ -20,17 +20,8 @@ scrape_configs:
     static_configs:
       - targets: ["192.168.33.10:8082"]
 
-  - job_name: "mysql"
-    metrics_path: /metrics  # Typical with MySQL exporter
-    static_configs:
-      - targets: ["192.168.33.10:9104"]  # Default MySQL exporter port
-
   - job_name: "sonarqube"
     metrics_path: /metrics  # Typical with SonarQube exporter
     static_configs:
-      - targets: ["192.168.33.10:<EXPORTER_PORT>"]  # Replace with exporter port if installed
+      - targets: ["192.168.33.10:9000"]  # Replace with exporter port if installed
 
-  - job_name: "nexus"
-    metrics_path: /metrics  # Typical with Nexus exporter
-    static_configs:
-      - targets: ["192.168.33.10:<EXPORTER_PORT>"]  # Replace with exporter port if installed
