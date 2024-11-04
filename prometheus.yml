@@ -1,8 +1,6 @@
-
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
-
 
 alerting:
   alertmanagers:
@@ -13,26 +11,26 @@ rule_files: []
 
 scrape_configs:
   - job_name: "jenkins"
-    metrics_path: /prometheus
+    metrics_path: /prometheus  # Ensure Prometheus plugin is installed
     static_configs:
       - targets: ["192.168.33.10:8080"]
 
   - job_name: "springboot"
-    metrics_path: /prometheus
+    metrics_path: /actuator/prometheus  # Common path with Spring Boot + Micrometer
     static_configs:
       - targets: ["192.168.33.10:8082"]
 
   - job_name: "mysql"
-    metrics_path: /prometheus
+    metrics_path: /metrics  # Typical with MySQL exporter
     static_configs:
-      - targets: ["192.168.33.10:3306"]
+      - targets: ["192.168.33.10:9104"]  # Default MySQL exporter port
 
   - job_name: "sonarqube"
-    metrics_path: /prometheus
+    metrics_path: /metrics  # Typical with SonarQube exporter
     static_configs:
-      - targets: ["192.168.33.10:9000"]
+      - targets: ["192.168.33.10:<EXPORTER_PORT>"]  # Replace with exporter port if installed
 
   - job_name: "nexus"
-    metrics_path: /prometheus
+    metrics_path: /metrics  # Typical with Nexus exporter
     static_configs:
-      - targets: ["192.168.33.10:8081"]
+      - targets: ["192.168.33.10:<EXPORTER_PORT>"]  # Replace with exporter port if installed
