@@ -24,6 +24,9 @@ scrape_configs:
     metrics_path: '/api/prometheus/metrics'
     static_configs:
       - targets: ['192.168.33.10:9000']
+    basic_auth:
+      username: 'admin'
+      password: 'Mohamedhama@2000'
 
   - job_name: "vm"
     metrics_path: /metrics
