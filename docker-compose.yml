@@ -11,14 +11,19 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
 
   app:
     image: bouheni/foyer-app
     container_name: springboot-app
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/Foyer?createDatabaseIfNotExist=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD:
+      - SPRING_DATASOURCE_URLjdbc:mysql://db:3306/Foyer?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
     ports:
       - "8082:8081"
     depends_on:
