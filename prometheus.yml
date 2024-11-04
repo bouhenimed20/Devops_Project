@@ -24,7 +24,6 @@ scrape_configs:
 
   - job_name: "mysql"
     metrics_path: /prometheus
-    metrics_path: /prometheus
     static_configs:
       - targets: ["192.168.33.10:3306"]
 
