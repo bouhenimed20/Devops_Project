@@ -26,7 +26,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_JPA_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
     ports:
-      - "8082:8081"
+      - "8082:8082"
     depends_on:
       db:
         condition: service_healthy
