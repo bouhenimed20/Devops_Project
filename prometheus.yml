@@ -16,7 +16,7 @@ scrape_configs:
       - targets: ["192.168.33.10:8080"]
 
   - job_name: "springboot"
-    metrics_path: '/actuator/prometheus'
+    metrics_path: '/Foyer/actuator/prometheus'
     static_configs:
       - targets: ["192.168.33.10:8082"]
 
