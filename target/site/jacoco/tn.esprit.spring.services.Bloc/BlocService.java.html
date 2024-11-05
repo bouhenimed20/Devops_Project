@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BlocService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Foyer</a> &gt; <a href="index.source.html" class="el_package">tn.esprit.spring.services.Bloc</a> &gt; <span class="el_source">BlocService.java</span></div><h1>BlocService.java</h1><pre class="source lang-java linenums">package tn.esprit.spring.services.Bloc;
+
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import tn.esprit.spring.dao.entities.Bloc;
+import tn.esprit.spring.dao.entities.Chambre;
+import tn.esprit.spring.dao.entities.Foyer;
+import tn.esprit.spring.dao.repositories.BlocRepository;
+import tn.esprit.spring.dao.repositories.ChambreRepository;
+import tn.esprit.spring.dao.repositories.FoyerRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+<span class="nc" id="L16">@AllArgsConstructor</span>
+public class BlocService implements IBlocService {
+    BlocRepository repo;
+    ChambreRepository chambreRepository;
+    BlocRepository blocRepository;
+    FoyerRepository foyerRepository;
+
+    @Override
+    public Bloc addOrUpdate2(Bloc b) { //Cascade
+<span class="nc" id="L25">        List&lt;Chambre&gt; chambres= b.getChambres();</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">        for (Chambre c: chambres) {</span>
+<span class="nc" id="L27">            c.setBloc(b);</span>
+<span class="nc" id="L28">            chambreRepository.save(c);</span>
+<span class="nc" id="L29">        }</span>
+<span class="nc" id="L30">        return b;</span>
+    }
+
+    @Override
+    public Bloc addOrUpdate(Bloc b) {
+<span class="nc" id="L35">        List&lt;Chambre&gt; chambres= b.getChambres();</span>
+<span class="nc" id="L36">        b= repo.save(b);</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        for (Chambre chambre: chambres) {</span>
+<span class="nc" id="L38">            chambre.setBloc(b);</span>
+<span class="nc" id="L39">            chambreRepository.save(chambre);</span>
+<span class="nc" id="L40">        }</span>
+<span class="nc" id="L41">        return b;</span>
+    }
+
+    @Override
+    public List&lt;Bloc&gt; findAll() {
+<span class="nc" id="L46">        return repo.findAll();</span>
+    }
+
+    @Override
+    public Bloc findById(long id) {
+<span class="nc" id="L51">        return repo.findById(id).get();</span>
+    }
+
+    @Override
+    public void deleteById(long id) {
+<span class="nc" id="L56">        repo.deleteById(id);</span>
+<span class="nc" id="L57">    }</span>
+
+    @Override
+    public void delete(Bloc b) {
+<span class="nc" id="L61">        List&lt;Chambre&gt; chambres= b.getChambres();</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        for (Chambre chambre: chambres) {</span>
+<span class="nc" id="L63">            chambreRepository.delete(chambre);</span>
+<span class="nc" id="L64">        }</span>
+<span class="nc" id="L65">        repo.delete(b);</span>
+<span class="nc" id="L66">    }</span>
+
+    @Override
+    public Bloc affecterChambresABloc(List&lt;Long&gt; numChambre, String nomBloc) {
+        //1
+<span class="nc" id="L71">        Bloc b = repo.findByNomBloc(nomBloc);</span>
+<span class="nc" id="L72">        List&lt;Chambre&gt; chambres= new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        for (Long nu: numChambre) {</span>
+<span class="nc" id="L74">            Chambre chambre=chambreRepository.findByNumeroChambre(nu);</span>
+<span class="nc" id="L75">            chambres.add(chambre);</span>
+<span class="nc" id="L76">        }</span>
+        // Keyword (2ème méthode)
+        //chambres=chambreRepository.findAllByNumeroChambre(numChambre);
+        //2 Parent==&gt;Chambre  Child==&gt; Bloc
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        for (Chambre cha : chambres) {</span>
+            //3 On affecte le child au parent
+<span class="nc" id="L82">                cha.setBloc(b);</span>
+            //4 save du parent
+<span class="nc" id="L84">                chambreRepository.save(cha);</span>
+<span class="nc" id="L85">        }</span>
+<span class="nc" id="L86">        return b;</span>
+    }
+
+    @Override
+    public Bloc affecterBlocAFoyer(String nomBloc, String nomFoyer) {
+<span class="nc" id="L91">        Bloc b = blocRepository.findByNomBloc(nomBloc); //Parent</span>
+<span class="nc" id="L92">        Foyer f = foyerRepository.findByNomFoyer(nomFoyer); //Child</span>
+        //On affecte le child au parent
+<span class="nc" id="L94">        b.setFoyer(f);</span>
+<span class="nc" id="L95">        return blocRepository.save(b);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
