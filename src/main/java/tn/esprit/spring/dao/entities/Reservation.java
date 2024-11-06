@@ -25,6 +25,6 @@ public class Reservation implements Serializable {
     boolean estValide;
     @ManyToMany
     @JsonIgnore
-    List<Etudiant> etudiants = new ArrayList<>();
+    private transient List<Etudiant> etudiants = new ArrayList<>();
 
 }
