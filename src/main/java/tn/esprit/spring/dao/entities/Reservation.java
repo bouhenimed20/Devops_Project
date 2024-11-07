@@ -19,11 +19,14 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Reservation implements Serializable {
+
     @Id
     String idReservation;
+
     LocalDate anneeUniversitaire;
     boolean estValide;
-    @ManyToMany
+
+    @ManyToMany(mappedBy = "reservations")
     @JsonIgnore
     private transient List<Etudiant> etudiants = new ArrayList<>();
 
