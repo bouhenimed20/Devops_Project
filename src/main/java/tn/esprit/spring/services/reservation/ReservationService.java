@@ -156,7 +156,6 @@ public class ReservationService implements IReservationService
             dateDebutAU = LocalDate.of(Integer.parseInt("20" + year), 9, 15);
             dateFinAU = LocalDate.of(Integer.parseInt("20" + (year + 1)), 6, 30);
         }
-        // Fin "récuperer l'année universitaire actuelle"
         for (Reservation reservation : repo.findByEstValideAndAnneeUniversitaireBetween(true, dateDebutAU, dateFinAU)) {
             reservation.setEstValide(false);
             repo.save(reservation);
