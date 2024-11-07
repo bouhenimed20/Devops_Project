@@ -112,16 +112,17 @@ pipeline {
        stage('docker_compose') {
            steps {
                script {
-                   def foyerAppRunning = sh(script: "docker ps -q --filter 'name=foyer-app'", returnStdout: true).trim()
-                   def mysqlRunning = sh(script: "docker ps -q --filter 'name=mysqldb'", returnStdout: true).trim()
+                   // Check if the mysql-db container exists
+                   def mysqlDbExists = sh(script: "docker ps -a --filter 'name=mysql-db' --format '{{.ID}}'", returnStdout: true).trim()
+                   def foyerAppExists = sh(script: "docker ps -a --filter 'name=foyer-app' --format '{{.ID}}'", returnStdout: true).trim()
 
-                   // Check if either container is not running
-                   if (!foyerAppRunning || !mysqlRunning) {
-                       echo 'One or more containers are not running; starting containers...'
+                   // Only run docker-compose up if neither container exists
+                   if (!mysqlDbExists || !foyerAppExists) {
+                       echo 'One or more containers do not exist or are not created yet; starting containers...'
                        sh "docker-compose -f docker-compose.yml up -d"
                        sh "docker-compose -f docker-compose-monitoring.yml up -d"
                    } else {
-                       echo 'Both containers are already running; skipping startup.'
+                       echo 'Both containers already exist; skipping docker-compose up.'
                    }
                }
            }
