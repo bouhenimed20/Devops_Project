@@ -183,5 +183,5 @@ class ChambreServiceWithMocksTest {
         verify(chambreRepository, times(1)).countReservationsByIdChambreAndReservationsEstValideAndReservationsAnneeUniversitaireBetween(
                 1L, true, dateDebutAU, dateFinAU);
     }
-
+  
 }
