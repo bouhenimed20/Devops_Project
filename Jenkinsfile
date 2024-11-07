@@ -120,7 +120,7 @@ pipeline {
                    if (!mysqlDbExists || !foyerAppExists) {
                        echo 'One or more containers do not exist or are not created yet; starting containers...'
                        sh "docker-compose -f docker-compose.yml up -d"
-                       sh "docker-compose -f docker-compose-monitoring.yml up -d"
+                       sh "docker-compose -f docker-compose-monotoring.yml up -d"
                    } else {
                        echo 'Both containers already exist; skipping docker-compose up.'
                    }
