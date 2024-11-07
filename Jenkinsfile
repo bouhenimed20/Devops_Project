@@ -12,6 +12,11 @@ pipeline {
         SONAR_PROJECT_NAME = '5ARCTIC6-G6-projet_devops'
         SONAR_HOST_URL = 'http://192.168.33.10:9000'
         SONAR_TOKEN = 'sqp_025708b4238e562854193537a342b8f1611abbab'
+        NEXUS_URL = 'http://192.168.33.10:8081'
+        NEXUS_CREDENTIALS_ID = 'nexus_credentials'
+        NEXUS_PROTOCOL = 'http'
+        NEXUS_VERSION = 'nexus3'
+        NEXUS_REPOSITORY = 'nexus-repo-foyer'
     }
 
     stages {
@@ -43,6 +48,12 @@ pipeline {
                         error("Stopping the pipeline due to build failure.")
                     }
                 }
+            }
+        }
+
+        stage('JaCoCo Report') {
+            steps {
+                sh 'mvn jacoco:report'
             }
         }
 
@@ -97,20 +108,20 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                script {
-                    try {
-                        sh 'mvn clean deploy -DskipTests'
-                    } catch (Exception e) {
-                        echo "Deployment failed: ${e.message}"
-                        currentBuild.result = 'FAILURE'
-                        error("Stopping the pipeline due to deployment failure.")
+        stage('Deploy to Nexus') {
+                    steps {
+                        script {
+                            def repositoryUrl = isSnapshot() ? "${NEXUS_URL}/repository/maven-snapshots/" : "${NEXUS_URL}/repository/maven-releases/"
+                            try {
+                                sh "mvn deploy -DskipTests -DaltDeploymentRepository=deploymentRepo::default::${repositoryUrl}"
+                            } catch (Exception e) {
+                                currentBuild.result = 'FAILURE'
+                                error("Maven deploy failed: ${e.message}")
+                            }
+                        }
                     }
-                }
-            }
         }
-    }
+}
 
     post {
         success {
