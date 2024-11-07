@@ -109,6 +109,19 @@ class ReservationServiceWithMocksTest {
     }
 
     @Test
+    void testDeleteReservationWithMocks() {
+        // Préparation des données de test
+        Reservation reservation = new Reservation();
+        reservation.setIdReservation("2023/2024-A-1-123456789");
+
+        // Appel de la méthode
+        reservationService.delete(reservation);
+
+        // Vérification que la méthode delete a été appelée sur le repository
+        verify(reservationRepository, times(1)).delete(reservation);
+    }
+
+    @Test
     void testAjouterReservationEtAssignerAChambreEtAEtudiantWithMocks() {
         // Préparation des données de test
         Reservation reservation = new Reservation();
