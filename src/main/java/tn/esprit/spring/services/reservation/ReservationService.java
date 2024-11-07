@@ -59,10 +59,7 @@ public class ReservationService implements IReservationService
 
     @Override
     public Reservation ajouterReservationEtAssignerAChambreEtAEtudiant(Long numChambre, long cin) {
-        // Pour l’ajout de Réservation, l’id est un String et c’est la concaténation de "numeroChambre",
-        // "nomBloc" et "cin". Aussi, l’ajout ne se fait que si la capacite maximale de la chambre est encore non atteinte.
 
-        // Début "récuperer l'année universitaire actuelle"
         LocalDate dateDebutAU;
         LocalDate dateFinAU;
         int year = LocalDate.now().getYear() % 100;
@@ -73,7 +70,6 @@ public class ReservationService implements IReservationService
             dateDebutAU = LocalDate.of(Integer.parseInt("20" + year), 9, 15);
             dateFinAU = LocalDate.of(Integer.parseInt("20" + (year + 1)), 6, 30);
         }
-        // Fin "récuperer l'année universitaire actuelle"
         Reservation res = new Reservation();
         Chambre c = chambreRepository.findByNumeroChambre(numChambre);
         Etudiant e = etudiantRepository.findByCin(cin);
