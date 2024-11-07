@@ -89,7 +89,7 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build_Docker_Image') {
             steps {
                 script {
                     sh "docker build -t ${DOCKER_IMAGE_NAME}:latest ."
@@ -97,7 +97,7 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Push_Docker_Image') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: DOCKER_HUB_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
@@ -108,7 +108,25 @@ pipeline {
             }
         }
 
-        stage('Deploy to Nexus') {
+
+        stage('docker_compose') {
+                            steps {
+                                script {
+                                    def foyerAppRunning = sh(script: "docker ps -q --filter 'name=foyer-app'", returnStdout: true).trim()
+                                    def mysqlRunning = sh(script: "docker ps -q --filter 'name=mysqldb'", returnStdout: true).trim()
+
+                                    if (!foyerAppRunning || !mysqlRunning) {
+                                        echo 'Les conteneurs ne sont pas en cours d\'exécution, démarrage...'
+                                        sh "docker-compose -f docker-compose-foyer.yml up -d"
+                                        sh "docker-compose -f docker-compose-monitoring.yml up -d"
+                                    } else {
+                                        echo 'Les conteneurs sont déjà en cours d\'exécution, aucun démarrage nécessaire.'
+                                    }
+                                }
+                            }
+                        }
+
+        stage('Deploy_Nexus') {
                     steps {
                         script {
                             def repositoryUrl = isSnapshot() ? "${NEXUS_URL}/repository/maven-snapshots/" : "${NEXUS_URL}/repository/maven-releases/"
@@ -143,4 +161,7 @@ pipeline {
                  replyTo: MAIL_SENDER
         }
     }
+}
+def isSnapshot() {
+    return sh(script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true).trim().endsWith('-SNAPSHOT')
 }

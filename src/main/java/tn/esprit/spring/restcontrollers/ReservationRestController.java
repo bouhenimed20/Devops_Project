@@ -3,7 +3,7 @@ package tn.esprit.spring.restcontrollers;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.spring.dao.entities.Reservation;
-import tn.esprit.spring.services.reservation.IReservationService;
+import tn.esprit.spring.services.Reservation.IReservationService;
 
 import java.time.LocalDate;
 import java.util.List;
