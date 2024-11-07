@@ -1,4 +1,4 @@
-package tn.esprit.spring.services.Bloc;
+package tn.esprit.spring.services.bloc;
 
 import tn.esprit.spring.dao.entities.Bloc;
 

@@ -1,4 +1,4 @@
-package tn.esprit.spring.services.Etudiant;
+package tn.esprit.spring.services.etudiant;
 
 import tn.esprit.spring.dao.entities.Etudiant;
 

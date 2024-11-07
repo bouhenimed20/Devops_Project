@@ -1,4 +1,4 @@
-package tn.esprit.spring.services.Foyer;
+package tn.esprit.spring.services.foyer;
 
 import tn.esprit.spring.dao.entities.Foyer;
 import tn.esprit.spring.dao.entities.Universite;
