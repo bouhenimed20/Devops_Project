@@ -18,23 +18,16 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Etudiant implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long idEtudiant;
-
     String nomEt;
     String prenomEt;
     long cin;
     String ecole;
     LocalDate dateNaissance;
+    @ManyToMany(mappedBy = "etudiants")
+    List<Reservation> reservations= new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "etudiant_reservation",
-            joinColumns = @JoinColumn(name = "etudiant_id"),
-            inverseJoinColumns = @JoinColumn(name = "reservation_id")
-    )
-    List<Reservation> reservations = new ArrayList<>();
 
 }

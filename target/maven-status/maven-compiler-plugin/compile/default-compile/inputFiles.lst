@@ -11,7 +11,7 @@ C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\s
 C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\restcontrollers\ReservationRestController.java
 C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\Schedular\test.java
 C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\dao\repositories\FoyerRepository.java
-C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\services\Reservation\ReservationService.java
+C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\services\reservation\ReservationService.java
 C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\dao\entities\TypeChambre.java
 C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\services\Bloc\IBlocService.java
 C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\dao\entities\Bloc.java
@@ -27,7 +27,7 @@ C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\s
 C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\dao\repositories\BlocRepository.java
 C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\restcontrollers\BlocRestController.java
 C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\services\Etudiant\IEtudiantService.java
-C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\services\Reservation\IReservationService.java
+C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\services\reservation\IReservationService.java
 C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\dao\entities\Foyer.java
 C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\services\chambre\ChambreService.java
 C:\Users\BouheniMed\Pictures\5ARCTIC6-G6-projet_devops\src\main\java\tn\esprit\spring\restcontrollers\FoyerRestController.java

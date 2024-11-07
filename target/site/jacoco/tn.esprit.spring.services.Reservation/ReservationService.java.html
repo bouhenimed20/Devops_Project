@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReservationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Foyer</a> &gt; <a href="index.source.html" class="el_package">tn.esprit.spring.services.Reservation</a> &gt; <span class="el_source">ReservationService.java</span></div><h1>ReservationService.java</h1><pre class="source lang-java linenums">package tn.esprit.spring.services.Reservation;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReservationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Foyer</a> &gt; <a href="index.source.html" class="el_package">tn.esprit.spring.services.reservation</a> &gt; <span class="el_source">ReservationService.java</span></div><h1>ReservationService.java</h1><pre class="source lang-java linenums">package tn.esprit.spring.services.reservation;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,40 +11,51 @@ import tn.esprit.spring.dao.repositories.EtudiantRepository;
 import tn.esprit.spring.dao.repositories.ReservationRepository;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
-<span class="nc" id="L17">@AllArgsConstructor</span>
-<span class="nc" id="L18">@Slf4j</span>
-public class ReservationService implements IReservationService {
+<span class="nc" id="L19">@AllArgsConstructor</span>
+<span class="nc" id="L20">@Slf4j</span>
+public class ReservationService implements IReservationService
+{
     ReservationRepository repo;
     ChambreRepository chambreRepository;
     EtudiantRepository etudiantRepository;
-
+<span class="nc" id="L26">    private static final Logger logger = LoggerFactory.getLogger(ReservationService.class);</span>
     @Override
     public Reservation addOrUpdate(Reservation r) {
-<span class="nc" id="L26">        return repo.save(r);</span>
+<span class="nc" id="L29">        return repo.save(r);</span>
     }
+
 
     @Override
     public List&lt;Reservation&gt; findAll() {
-<span class="nc" id="L31">        return repo.findAll();</span>
+<span class="nc" id="L35">        return repo.findAll();</span>
     }
 
     @Override
     public Reservation findById(String id) {
-<span class="nc" id="L36">        return repo.findById(id).get();</span>
+<span class="nc" id="L40">        Optional&lt;Reservation&gt; optionalReservation = repo.findById(id);</span>
+
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (optionalReservation.isPresent()) {</span>
+<span class="nc" id="L43">            return optionalReservation.get();</span>
+        } else {
+<span class="nc" id="L45">            throw new NoSuchElementException(&quot;Aucune réservation trouvée pour l'ID : &quot; + id);</span>
+        }
     }
+
 
     @Override
     public void deleteById(String id) {
-<span class="nc" id="L41">        repo.deleteById(id);</span>
-<span class="nc" id="L42">    }</span>
+<span class="nc" id="L52">        repo.deleteById(id);</span>
+<span class="nc" id="L53">    }</span>
 
     @Override
     public void delete(Reservation r) {
-<span class="nc" id="L46">        repo.delete(r);</span>
-<span class="nc" id="L47">    }</span>
+<span class="nc" id="L57">        repo.delete(r);</span>
+<span class="nc" id="L58">    }</span>
 
     @Override
     public Reservation ajouterReservationEtAssignerAChambreEtAEtudiant(Long numChambre, long cin) {
@@ -54,107 +65,108 @@ public class ReservationService implements IReservationService {
         // Début &quot;récuperer l'année universitaire actuelle&quot;
         LocalDate dateDebutAU;
         LocalDate dateFinAU;
-        int numReservation;
-<span class="nc" id="L58">        int year = LocalDate.now().getYear() % 100;</span>
-<span class="nc bnc" id="L59" title="All 2 branches missed.">        if (LocalDate.now().getMonthValue() &lt;= 7) {</span>
-<span class="nc" id="L60">            dateDebutAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + (year - 1)), 9, 15);</span>
-<span class="nc" id="L61">            dateFinAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + year), 6, 30);</span>
+<span class="nc" id="L68">        int year = LocalDate.now().getYear() % 100;</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        if (LocalDate.now().getMonthValue() &lt;= 7) {</span>
+<span class="nc" id="L70">            dateDebutAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + (year - 1)), 9, 15);</span>
+<span class="nc" id="L71">            dateFinAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + year), 6, 30);</span>
         } else {
-<span class="nc" id="L63">            dateDebutAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + year), 9, 15);</span>
-<span class="nc" id="L64">            dateFinAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + (year + 1)), 6, 30);</span>
+<span class="nc" id="L73">            dateDebutAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + year), 9, 15);</span>
+<span class="nc" id="L74">            dateFinAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + (year + 1)), 6, 30);</span>
         }
         // Fin &quot;récuperer l'année universitaire actuelle&quot;
-<span class="nc" id="L67">        Reservation res = new Reservation();</span>
-<span class="nc" id="L68">        Chambre c = chambreRepository.findByNumeroChambre(numChambre);</span>
-<span class="nc" id="L69">        Etudiant e = etudiantRepository.findByCin(cin);</span>
-<span class="nc" id="L70">        boolean ajout = false;</span>
-<span class="nc" id="L71">        int numRes = chambreRepository.countReservationsByIdChambreAndReservationsAnneeUniversitaireBetween(c.getIdChambre(), dateDebutAU, dateFinAU);</span>
-        //int numRes = chambreRepository.listerReservationPourUneChambre(c.getIdChambre(), dateDebutAU, dateFinAU);
-<span class="nc" id="L73">        System.err.println(numRes);</span>
-<span class="nc bnc" id="L74" title="All 4 branches missed.">        switch (c.getTypeC()) {</span>
+<span class="nc" id="L77">        Reservation res = new Reservation();</span>
+<span class="nc" id="L78">        Chambre c = chambreRepository.findByNumeroChambre(numChambre);</span>
+<span class="nc" id="L79">        Etudiant e = etudiantRepository.findByCin(cin);</span>
+<span class="nc" id="L80">        boolean ajout = false;</span>
+<span class="nc" id="L81">        int numRes = chambreRepository.countReservationsByIdChambreAndReservationsAnneeUniversitaireBetween(c.getIdChambre(), dateDebutAU, dateFinAU);</span>
+<span class="nc" id="L82">        logger.error(&quot;Erreur lors du traitement de la réservation : {}&quot;, numRes);</span>
+<span class="nc bnc" id="L83" title="All 4 branches missed.">        switch (c.getTypeC()) {</span>
             case SIMPLE:
-<span class="nc bnc" id="L76" title="All 2 branches missed.">                if (numRes &lt; 1) {</span>
-<span class="nc" id="L77">                    ajout = true;</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                if (numRes &lt; 1) {</span>
+<span class="nc" id="L86">                    ajout = true;</span>
                 } else {
-<span class="nc" id="L79">                    log.info(&quot;Chambre simple remplie !&quot;);</span>
+<span class="nc" id="L88">                    log.info(&quot;Chambre simple remplie !&quot;);</span>
                 }
-<span class="nc" id="L81">                break;</span>
+<span class="nc" id="L90">                break;</span>
             case DOUBLE:
-<span class="nc bnc" id="L83" title="All 2 branches missed.">                if (numRes &lt; 2) {</span>
-<span class="nc" id="L84">                    ajout = true;</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">                if (numRes &lt; 2) {</span>
+<span class="nc" id="L93">                    ajout = true;</span>
                 } else {
-<span class="nc" id="L86">                    log.info(&quot;Chambre double remplie !&quot;);</span>
+<span class="nc" id="L95">                    log.info(&quot;Chambre double remplie !&quot;);</span>
                 }
-<span class="nc" id="L88">                break;</span>
+<span class="nc" id="L97">                break;</span>
             case TRIPLE:
-<span class="nc bnc" id="L90" title="All 2 branches missed.">                if (numRes &lt; 3) {</span>
-<span class="nc" id="L91">                    ajout = true;</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">                if (numRes &lt; 3) {</span>
+<span class="nc" id="L100">                    ajout = true;</span>
                 } else {
-<span class="nc" id="L93">                    log.info(&quot;Chambre triple remplie !&quot;);</span>
+<span class="nc" id="L102">                    log.info(&quot;Chambre triple remplie !&quot;);</span>
                 }
                 break;
         }
-<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (ajout) {</span>
-<span class="nc" id="L98">            res.setEstValide(false);</span>
-<span class="nc" id="L99">            res.setAnneeUniversitaire(LocalDate.now());</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (ajout) {</span>
+<span class="nc" id="L107">            res.setEstValide(false);</span>
+<span class="nc" id="L108">            res.setAnneeUniversitaire(LocalDate.now());</span>
             // AU-BLOC-NumChambre-CIN --&gt; Exemple: 2023/2024-Bloc A-1-123456789
-            //res.setIdReservation(c.getNumeroChambre() + &quot;-&quot; + c.getBloc().getNomBloc() + &quot;-&quot; + e.getCin());
-<span class="nc" id="L102">            res.setIdReservation(dateDebutAU.getYear() + &quot;/&quot; + dateFinAU.getYear() + &quot;-&quot; + c.getBloc().getNomBloc() + &quot;-&quot; + c.getNumeroChambre() + &quot;-&quot; + e.getCin());</span>
-<span class="nc" id="L103">            res.getEtudiants().add(e);</span>
-<span class="nc" id="L104">            res.setEstValide(true);</span>
-<span class="nc" id="L105">            res = repo.save(res);</span>
-<span class="nc" id="L106">            c.getReservations().add(res);</span>
-<span class="nc" id="L107">            chambreRepository.save(c);</span>
+<span class="nc" id="L110">            res.setIdReservation(dateDebutAU.getYear() + &quot;/&quot; + dateFinAU.getYear() + &quot;-&quot; + c.getBloc().getNomBloc() + &quot;-&quot; + c.getNumeroChambre() + &quot;-&quot; + e.getCin());</span>
+<span class="nc" id="L111">            res.getEtudiants().add(e);</span>
+<span class="nc" id="L112">            res.setEstValide(true);</span>
+<span class="nc" id="L113">            res = repo.save(res);</span>
+<span class="nc" id="L114">            c.getReservations().add(res);</span>
+<span class="nc" id="L115">            chambreRepository.save(c);</span>
         }
-<span class="nc" id="L109">        return res;</span>
+<span class="nc" id="L117">        return res;</span>
     }
 
     @Override
     public long getReservationParAnneeUniversitaire(LocalDate debutAnnee, LocalDate finAnnee) {
-<span class="nc" id="L114">        return repo.countByAnneeUniversitaireBetween(debutAnnee, finAnnee);</span>
+<span class="nc" id="L122">        return repo.countByAnneeUniversitaireBetween(debutAnnee, finAnnee);</span>
     }
 
     @Override
     public String annulerReservation(long cinEtudiant) {
-<span class="nc" id="L119">        Reservation r = repo.findByEtudiantsCinAndEstValide(cinEtudiant, true);</span>
-<span class="nc" id="L120">        Chambre c = chambreRepository.findByReservationsIdReservation(r.getIdReservation());</span>
-<span class="nc" id="L121">        c.getReservations().remove(r);</span>
-<span class="nc" id="L122">        chambreRepository.save(c);</span>
-<span class="nc" id="L123">        repo.delete(r);</span>
-<span class="nc" id="L124">        return &quot;La réservation &quot; + r.getIdReservation() + &quot; est annulée avec succés&quot;;</span>
+<span class="nc" id="L127">        Reservation r = repo.findByEtudiantsCinAndEstValide(cinEtudiant, true);</span>
+<span class="nc" id="L128">        Chambre c = chambreRepository.findByReservationsIdReservation(r.getIdReservation());</span>
+<span class="nc" id="L129">        c.getReservations().remove(r);</span>
+<span class="nc" id="L130">        chambreRepository.save(c);</span>
+<span class="nc" id="L131">        repo.delete(r);</span>
+<span class="nc" id="L132">        return &quot;La réservation &quot; + r.getIdReservation() + &quot; est annulée avec succés&quot;;</span>
     }
 
     @Override
     public void affectReservationAChambre(String idRes, long idChambre) {
-<span class="nc" id="L129">        Reservation r = repo.findById(idRes).get();</span>
-<span class="nc" id="L130">        Chambre c = chambreRepository.findById(idChambre).get();</span>
-        // Parent: Chambre , Child: Reservation
-        // On affecte le child au parent
-<span class="nc" id="L133">        c.getReservations().add(r);</span>
-<span class="nc" id="L134">        chambreRepository.save(c);</span>
-<span class="nc" id="L135">    }</span>
+<span class="nc" id="L137">        Optional&lt;Reservation&gt; optionalReservation = repo.findById(idRes);</span>
+<span class="nc" id="L138">        Optional&lt;Chambre&gt; optionalChambre = chambreRepository.findById(idChambre);</span>
+
+<span class="nc bnc" id="L140" title="All 4 branches missed.">        if (optionalReservation.isPresent() &amp;&amp; optionalChambre.isPresent()) {</span>
+<span class="nc" id="L141">            Reservation r = optionalReservation.get();</span>
+<span class="nc" id="L142">            Chambre c = optionalChambre.get();</span>
+<span class="nc" id="L143">            c.getReservations().add(r);</span>
+<span class="nc" id="L144">            chambreRepository.save(c);</span>
+<span class="nc" id="L145">        } else {</span>
+<span class="nc" id="L146">            throw new NoSuchElementException(&quot;Réservation ou chambre non trouvée pour les IDs fournis.&quot;);</span>
+        }
+<span class="nc" id="L148">    }</span>
 
     @Override
     public void annulerReservations() {
         // Début &quot;récuperer l'année universitaire actuelle&quot;
         LocalDate dateDebutAU;
         LocalDate dateFinAU;
-        int numReservation;
-<span class="nc" id="L143">        int year = LocalDate.now().getYear() % 100;</span>
-<span class="nc bnc" id="L144" title="All 2 branches missed.">        if (LocalDate.now().getMonthValue() &lt;= 7) {</span>
-<span class="nc" id="L145">            dateDebutAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + (year - 1)), 9, 15);</span>
-<span class="nc" id="L146">            dateFinAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + year), 6, 30);</span>
+<span class="nc" id="L155">        int year = LocalDate.now().getYear() % 100;</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (LocalDate.now().getMonthValue() &lt;= 7) {</span>
+<span class="nc" id="L157">            dateDebutAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + (year - 1)), 9, 15);</span>
+<span class="nc" id="L158">            dateFinAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + year), 6, 30);</span>
         } else {
-<span class="nc" id="L148">            dateDebutAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + year), 9, 15);</span>
-<span class="nc" id="L149">            dateFinAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + (year + 1)), 6, 30);</span>
+<span class="nc" id="L160">            dateDebutAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + year), 9, 15);</span>
+<span class="nc" id="L161">            dateFinAU = LocalDate.of(Integer.parseInt(&quot;20&quot; + (year + 1)), 6, 30);</span>
         }
         // Fin &quot;récuperer l'année universitaire actuelle&quot;
-<span class="nc bnc" id="L152" title="All 2 branches missed.">        for (Reservation reservation : repo.findByEstValideAndAnneeUniversitaireBetween(true, dateDebutAU, dateFinAU)) {</span>
-<span class="nc" id="L153">            reservation.setEstValide(false);</span>
-<span class="nc" id="L154">            repo.save(reservation);</span>
-<span class="nc" id="L155">            log.info(&quot;La reservation &quot;+ reservation.getIdReservation()+&quot; est annulée automatiquement&quot;);</span>
-<span class="nc" id="L156">        }</span>
-<span class="nc" id="L157">    }</span>
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        for (Reservation reservation : repo.findByEstValideAndAnneeUniversitaireBetween(true, dateDebutAU, dateFinAU)) {</span>
+<span class="nc" id="L165">            reservation.setEstValide(false);</span>
+<span class="nc" id="L166">            repo.save(reservation);</span>
+<span class="nc" id="L167">            log.info(&quot;La reservation &quot;+ reservation.getIdReservation()+&quot; est annulée automatiquement&quot;);</span>
+<span class="nc" id="L168">        }</span>
+<span class="nc" id="L169">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

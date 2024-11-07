@@ -1,4 +1,4 @@
-package tn.esprit.spring.services.Reservation;
+package tn.esprit.spring.services.reservation;
 
 import tn.esprit.spring.dao.entities.Reservation;
 

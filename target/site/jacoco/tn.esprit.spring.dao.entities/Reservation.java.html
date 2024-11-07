@@ -16,16 +16,17 @@ import java.util.List;
 <span class="nc" id="L16">@Setter</span>
 <span class="nc" id="L17">@NoArgsConstructor</span>
 <span class="nc" id="L18">@AllArgsConstructor</span>
-<span class="nc" id="L19">@Builder</span>
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Reservation implements Serializable {
     @Id
-<span class="nc" id="L23">    String idReservation;</span>
-<span class="nc" id="L24">    LocalDate anneeUniversitaire;</span>
-<span class="nc" id="L25">    boolean estValide;</span>
-<span class="nc" id="L26">    @ManyToMany</span>
-    @JsonIgnore
-<span class="nc" id="L28">    List&lt;Etudiant&gt; etudiants = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L22">    String idReservation;</span>
 
+<span class="nc" id="L24">    LocalDate anneeUniversitaire;</span>
+
+<span class="nc" id="L26">    boolean estValide; // Valeur par défaut, mise à jour ici</span>
+
+<span class="nc" id="L28">    @ManyToMany</span>
+    @JsonIgnore
+<span class="nc" id="L30">    private List&lt;Etudiant&gt; etudiants = new ArrayList&lt;&gt;(); // Initialisation par défaut</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
