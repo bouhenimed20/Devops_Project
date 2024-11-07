@@ -18,7 +18,7 @@ services:
       start_period: 30s
 
   app:
-    image: 83f43dc9887a
+    image: bouheni/foyer-app
     container_name: springboot-app
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/foyer?createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
