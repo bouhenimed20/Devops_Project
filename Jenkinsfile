@@ -109,7 +109,7 @@ pipeline {
         }
 
 
-       stage('Docker Compose') {
+       stage('docker_compose') {
            steps {
                script {
                    def mysqlDbExists = sh(script: "docker ps -a --filter 'name=mysql-db' --format '{{.ID}}'", returnStdout: true).trim()
@@ -165,7 +165,6 @@ pipeline {
         }
         failure {
             mail to: MAIL_RECIPIENT,
-                 subject: "Build Failure: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                  subject: "Build Failure: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                  body: """
                  The build ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} has failed.
