@@ -109,22 +109,23 @@ pipeline {
         }
 
 
-        stage('docker_compose') {
-                            steps {
-                                script {
-                                    def foyerAppRunning = sh(script: "docker ps -q --filter 'name=foyer-app'", returnStdout: true).trim()
-                                    def mysqlRunning = sh(script: "docker ps -q --filter 'name=mysqldb'", returnStdout: true).trim()
+       stage('docker_compose') {
+           steps {
+               script {
+                   def foyerAppRunning = sh(script: "docker ps -q --filter 'name=foyer-app'", returnStdout: true).trim()
+                   def mysqlRunning = sh(script: "docker ps -q --filter 'name=mysqldb'", returnStdout: true).trim()
 
-                                    if (!foyerAppRunning || !mysqlRunning) {
-                                        echo 'Les conteneurs ne sont pas en cours d\'exécution, démarrage...'
-                                        sh "docker-compose -f docker-compose-foyer.yml up -d"
-                                        sh "docker-compose -f docker-compose-monitoring.yml up -d"
-                                    } else {
-                                        echo 'Les conteneurs sont déjà en cours d\'exécution, aucun démarrage nécessaire.'
-                                    }
-                                }
-                            }
-                        }
+                   if (!foyerAppRunning || !mysqlRunning) {
+                       echo 'Some containers are not running; starting containers...'
+                       sh "docker-compose -f docker-compose.yml up -d"
+                       sh "docker-compose -f docker-compose-monitoring.yml up -d"
+                   } else {
+                       echo 'Containers are already running; skipping startup.'
+                   }
+               }
+           }
+       }
+
 
         stage('Deploy_Nexus') {
                     steps {
