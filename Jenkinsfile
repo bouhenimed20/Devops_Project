@@ -112,21 +112,33 @@ pipeline {
        stage('docker_compose') {
            steps {
                script {
-                   // Check if the mysql-db container exists
+                   // Check if containers from docker-compose.yml already exist
                    def mysqlDbExists = sh(script: "docker ps -a --filter 'name=mysql-db' --format '{{.ID}}'", returnStdout: true).trim()
                    def foyerAppExists = sh(script: "docker ps -a --filter 'name=foyer-app' --format '{{.ID}}'", returnStdout: true).trim()
 
-                   // Only run docker-compose up if neither container exists
+                   // Run docker-compose up for the main app if containers are not found
                    if (!mysqlDbExists || !foyerAppExists) {
-                       echo 'One or more containers do not exist or are not created yet; starting containers...'
+                       echo 'One or more containers for main app do not exist; starting containers...'
                        sh "docker-compose -f docker-compose.yml up -d"
+                   } else {
+                       echo 'All main app containers already exist; skipping docker-compose up for main app.'
+                   }
+
+                   // Check if containers from docker-compose-monitoring.yml already exist
+                   def prometheusExists = sh(script: "docker ps -a --filter 'name=prometheus' --format '{{.ID}}'", returnStdout: true).trim()
+                   def grafanaExists = sh(script: "docker ps -a --filter 'name=grafana' --format '{{.ID}}'", returnStdout: true).trim()
+
+                   // Run docker-compose up for monitoring stack if containers are not found
+                   if (!prometheusExists || !grafanaExists) {
+                       echo 'One or more containers for monitoring stack do not exist; starting containers...'
                        sh "docker-compose -f docker-compose-monotoring.yml up -d"
                    } else {
-                       echo 'Both containers already exist; skipping docker-compose up.'
+                       echo 'All monitoring stack containers already exist; skipping docker-compose up for monitoring stack.'
                    }
                }
            }
        }
+
 
 
 
