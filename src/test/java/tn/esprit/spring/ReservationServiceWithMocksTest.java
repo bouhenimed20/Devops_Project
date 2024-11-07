@@ -43,124 +43,130 @@ class ReservationServiceWithMocksTest {
 
     @Test
     void testAddOrUpdateWithMocks() {
-        // Preparation of test data
+        // Préparation des données de test
         Reservation reservation = new Reservation();
         reservation.setIdReservation("2023/2024-A-1-123456789");
+        reservation.setEstValide(true); // Ensure 'estValide' is set here.
 
-        // Simulating the behavior of the mocks
+        // Simulation du comportement des mocks
         when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
 
-        // Calling the method
+        // Appel de la méthode
         Reservation result = reservationService.addOrUpdate(reservation);
 
-        // Verifications
+        // Vérifications
         assertNotNull(result);
         assertEquals("2023/2024-A-1-123456789", result.getIdReservation());
+        assertTrue(result.isEstValide()); // Ensure the value is checked
         verify(reservationRepository, times(1)).save(reservation);
     }
 
     @Test
     void testFindAllWithMocks() {
-        // Preparation of test data
+        // Préparation des données de test
         List<Reservation> reservations = new ArrayList<>();
         reservations.add(new Reservation());
         reservations.add(new Reservation());
 
-        // Simulating the behavior of the mocks
+        // Simulation du comportement des mocks
         when(reservationRepository.findAll()).thenReturn(reservations);
 
-        // Calling the method
+        // Appel de la méthode
         List<Reservation> result = reservationService.findAll();
 
-        // Verifications
+        // Vérifications
         assertEquals(2, result.size());
         verify(reservationRepository, times(1)).findAll();
     }
 
     @Test
     void testFindByIdWithMocks() {
-        // Preparation of test data
+        // Préparation des données de test
         Reservation reservation = new Reservation();
         reservation.setIdReservation("2023/2024-A-1-123456789");
+        reservation.setEstValide(true); // Ensure 'estValide' is set here.
 
-        // Simulating the behavior of the mocks
+        // Simulation du comportement des mocks
         when(reservationRepository.findById("2023/2024-A-1-123456789")).thenReturn(Optional.of(reservation));
 
-        // Calling the method
+        // Appel de la méthode
         Reservation result = reservationService.findById("2023/2024-A-1-123456789");
 
-        // Verifications
+        // Vérifications
         assertNotNull(result);
         assertEquals("2023/2024-A-1-123456789", result.getIdReservation());
+        assertTrue(result.isEstValide()); // Ensure the value is checked
         verify(reservationRepository, times(1)).findById("2023/2024-A-1-123456789");
     }
 
     @Test
     void testDeleteByIdWithMocks() {
-        // Calling the method
+        // Appel de la méthode
         reservationService.deleteById("2023/2024-A-1-123456789");
 
-        // Verifying that deleteById was called
+        // Vérification que la méthode deleteById a été appelée
         verify(reservationRepository, times(1)).deleteById("2023/2024-A-1-123456789");
     }
 
     @Test
     void testAjouterReservationEtAssignerAChambreEtAEtudiantWithMocks() {
-        // Preparation of test data
+        // Préparation des données de test
         Reservation reservation = new Reservation();
         reservation.setIdReservation("2023/2024-A-1-123456789");
+        reservation.setEstValide(true); // Ensure 'estValide' is set here.
 
-        // Creating the Bloc object
+        // Création de l'objet Bloc
         Bloc bloc = new Bloc();
         bloc.setNomBloc("Bloc A");
 
-        // Creating the Chambre object and assigning the Bloc
+        // Création de l'objet Chambre et assignation du Bloc
         Chambre chambre = new Chambre();
         chambre.setIdChambre(1L);
         chambre.setNumeroChambre(1L);
         chambre.setTypeC(TypeChambre.SIMPLE);
-        chambre.setBloc(bloc); // Assigning Bloc to Chambre
+        chambre.setBloc(bloc); // Assigner le Bloc à la Chambre
 
         Etudiant etudiant = new Etudiant();
         etudiant.setCin(123456789L);
 
-        // Simulating the behavior of the mocks
+        // Simulation du comportement des mocks
         when(chambreRepository.findByNumeroChambre(1L)).thenReturn(chambre);
         when(etudiantRepository.findByCin(123456789L)).thenReturn(etudiant);
         when(chambreRepository.countReservationsByIdChambreAndReservationsAnneeUniversitaireBetween(anyLong(), any(), any())).thenReturn(0);
         when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
 
-        // Calling the method
+        // Appel de la méthode
         Reservation result = reservationService.ajouterReservationEtAssignerAChambreEtAEtudiant(1L, 123456789L);
 
-        // Verifications
+        // Vérifications
         assertNotNull(result);
         assertEquals("2023/2024-A-1-123456789", result.getIdReservation());
+        assertTrue(result.isEstValide()); // Ensure the value is checked
         verify(reservationRepository, times(1)).save(any(Reservation.class));
     }
 
     @Test
     void testAnnulerReservationWithMocks() {
-        // Preparation of test data
+        // Préparation des données de test
         Reservation reservation = new Reservation();
         reservation.setIdReservation("2023/2024-A-1-123456789");
         reservation.setEstValide(true);
 
-        // Simulating the behavior of the mocks
+        // Simulation du comportement des mocks
         when(reservationRepository.findByEtudiantsCinAndEstValide(123456789L, true)).thenReturn(reservation);
         when(chambreRepository.findByReservationsIdReservation(reservation.getIdReservation())).thenReturn(new Chambre());
 
-        // Calling the method
+        // Appel de la méthode
         String message = reservationService.annulerReservation(123456789L);
 
-        // Verifications
+        // Vérifications
         assertEquals("La réservation 2023/2024-A-1-123456789 est annulée avec succés", message);
         verify(reservationRepository, times(1)).delete(reservation);
     }
 
     @Test
     void testAnnulerReservationsWithMocks() {
-        // Preparation of test data
+        // Préparation des données de test
         List<Reservation> reservations = new ArrayList<>();
         Reservation reservation1 = new Reservation();
         reservation1.setEstValide(true);
@@ -170,33 +176,34 @@ class ReservationServiceWithMocksTest {
         reservation2.setEstValide(true);
         reservations.add(reservation2);
 
-        // Simulating the behavior of the mocks
+        // Simulation du comportement des mocks
         when(reservationRepository.findByEstValideAndAnneeUniversitaireBetween(anyBoolean(), any(LocalDate.class), any(LocalDate.class))).thenReturn(reservations);
 
-        // Calling the method
+        // Appel de la méthode
         reservationService.annulerReservations();
 
-        // Verifying that save was called for each reservation
+        // Vérification que la méthode save a été appelée pour chaque réservation
         verify(reservationRepository, times(2)).save(any(Reservation.class));
     }
 
     @Test
     void testAffectReservationAChambreWithMocks() {
-        // Preparation of test data
+        // Préparation des données de test
         Reservation reservation = new Reservation();
         reservation.setIdReservation("2023/2024-A-1-123456789");
+        reservation.setEstValide(true); // Ensure 'estValide' is set here.
 
         Chambre chambre = new Chambre();
         chambre.setIdChambre(1L);
 
-        // Simulating the behavior of the mocks
+        // Simulation du comportement des mocks
         when(reservationRepository.findById("2023/2024-A-1-123456789")).thenReturn(Optional.of(reservation));
         when(chambreRepository.findById(1L)).thenReturn(Optional.of(chambre));
 
-        // Calling the method
+        // Appel de la méthode
         reservationService.affectReservationAChambre("2023/2024-A-1-123456789", 1L);
 
-        // Verifying that save was called for the chambre
+        // Vérification que la méthode save a été appelée pour la chambre
         verify(chambreRepository, times(1)).save(chambre);
     }
 }
